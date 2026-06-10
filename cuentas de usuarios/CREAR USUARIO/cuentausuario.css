@@ -1,0 +1,184 @@
+/* Importar fuente moderna */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600&display=swap');
+
+:root {
+    --azul-valientes: #2a7edd;
+    --azul-soft: #f0f7ff;
+    --blanco-cristal: rgba(255, 255, 255, 0.85);
+    --blanco-puro: #ffffff;
+    --texto-oscuro: #2d3748;
+    --morado-fondo: #7e6eac;
+    --morado-hover: #695a94;
+}
+
+body {
+    background-color: #81a5c9;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    position: relative;
+
+    background-position: center 30%;
+    background-size: 90%;
+    background-attachment: fixed;
+    background-color: #3075c9;
+     opacity: 0.90;
+}
+
+@keyframes flotar {
+    0% {
+        transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-12px) rotate(1deg); 
+    }
+    100% {
+        transform: translateY(0px) rotate(-1deg); 
+    }
+}
+body::before {
+    background-color: #2a7edd;
+    opacity: 0.15;
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../../logoa.png') ;
+    background-repeat: no-repeat;
+    background-position: center 30%;
+    background-size: 90%;
+    opacity: 0.15;
+    z-index: -1;
+    pointer-events: none;
+    animation: flotar 6s ease-in-out infinite alternate;
+}
+#volver-btn {
+    display: flex !important;
+    position: fixed !important;
+    top: 25px !important;
+    left: 25px !important;
+    z-index: 10000 !important;
+    
+    background: var(--blanco-puro) !important;
+    color: var(--morado-fondo) !important;
+    border: 1.5px solid #e2e8f0 !important;
+    
+    
+    padding: 12px 22px !important;
+    border-radius: 12px !important;
+    
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    cursor: pointer !important;
+    
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04) !important;
+    transition: all 0.3s ease !important;
+    
+    align-items: center;
+    gap: 8px;
+}
+
+#volver-btn:hover {
+    background: var(--azul-soft) !important;
+    color: var(--morado-hover) !important;
+    border-color: var(--morado-fondo) !important;
+    transform: translateX(-3px);
+    box-shadow: 0 6px 15px rgba(126, 110, 172, 0.15) !important;
+}
+
+
+.registro-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+     opacity: 0.80;
+}
+
+.form-card {
+    background: var(--blanco-puro);
+    width: 100%;
+    max-width: 450px;
+    padding: 40px;
+    border-radius: 30px; 
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04);
+    border: 1px solid #f1f5f9;
+    position: relative;
+}
+
+.header-logo {
+    background: var(--blanco-puro);
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid #edf2f7;
+    border-radius: 30px 30px 0 0;
+}
+
+.form-card h2 {
+    color: #1e293b;
+    text-align: center;
+    font-weight: 600;
+    margin-bottom: 30px;
+    font-size: 1.6rem;
+}
+
+
+label {
+    color: #64748b;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 8px;
+    display: block;
+    margin-left: 5px;
+}
+
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    border: 1px solid #e2e8f0;
+    border-radius: 15px;
+    background: var(--blanco-puro);
+    color: #334155;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    outline: none;
+    box-sizing: border-box;
+}
+
+input:focus {
+    border-color: var(--morado-fondo);
+    box-shadow: 0 0 0 4px rgba(126, 110, 172, 0.15);
+    transform: translateY(-1px);
+}
+
+/* --- BOTÓN REGISTRAR --- */
+.btn-registrar {
+    background: var(--blanco-puro);
+    color: #2e263d;
+    width: 100%;
+    padding: 16px;
+    border: 2px solid #ded6ee;
+    border-radius: 15px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.btn-registrar:hover {
+    background: #e8e3f0;
+    color: var(--morado-hover);
+    box-shadow: 0 8px 15px rgba(134, 108, 184, 0.2);
+    border: 2px solid var(--morado-fondo);
+    transform: translateY(-2px);
+}

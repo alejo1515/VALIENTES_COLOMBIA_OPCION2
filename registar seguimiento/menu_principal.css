@@ -1,0 +1,162 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600&display=swap');
+
+:root {
+    --azul-valientes: #4A90E2;
+    --azul-soft: #f0f7ff;
+    --blanco-cristal: rgba(255, 255, 255, 0.85);
+    --blanco-puro: #ffffff;
+    --texto-oscuro: #2d3748;
+    --morado-valientes: #7e6eac;
+    --morado-hover: #695a94;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: var(--texto-oscuro);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background-color: #cedceb;
+    background-image: url('../logoa.png');
+    background-repeat: no-repeat;
+    background-position: center 30%;
+    background-attachment: fixed;
+    background-size: 90%;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../logoa.png');
+    background-repeat: no-repeat;
+    background-position: center 30%;
+    background-size: 35%;
+    opacity: 0.1;
+    z-index: -1;
+    pointer-events: none;
+}
+
+
+/* BOTÓN VOLVER FIJO EN LA ESQUINA SUPERIOR IZQUIERDA */
+.volver-container {
+    position: fixed; /* Fija el elemento a la ventana del navegador */
+    top: 25px;       /* Distancia desde arriba */
+    left: 25px;      /* Distancia desde la izquierda */
+    z-index: 1000;   /* Asegura que esté por encima de cualquier otra capa */
+}
+
+#volver-btn {
+    background: var(--blanco-puro);
+    border: 1px solid #e2e8f0;
+    color: var(--azul-valientes);
+    padding: 10px 18px; /* Ajuste para un clic más cómodo */
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    display: flex;      /* Alinea texto e icono si lo lleva */
+    align-items: center;
+    gap: 8px;
+}
+
+#volver-btn:hover {
+    background: var(--azul-soft);
+    transform: translateX(-3px);
+    border-color: var(--azul-valientes);
+    box-shadow: 0 6px 12px rgba(74, 144, 226, 0.15);
+}
+
+
+
+.card-menu {
+    background: var(--blanco-cristal) !important;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    border-radius: 24px !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05) !important;
+    animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.header-logo {
+    background: #1a1c31;
+    border-radius: 23px 23px 0 0;
+}
+
+.logo-text {
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+.logo_flotante {
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+h2 {
+    color: var(--texto-oscuro);
+    font-weight: 600;
+}
+
+/* Rejilla de botones */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-top: 24px;
+}
+
+/* Botones del menú */
+.btn-menu {
+    background-color: var(--blanco-puro);
+    border: 1.5px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 16px 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #4a5568;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.btn-menu i {
+    font-size: 1.8rem;
+    color: var(--morado-valientes);
+}
+
+.btn-menu:hover {
+    transform: translateY(-3px);
+    border-color: var(--morado-valientes);
+    background-color: var(--azul-soft);
+    box-shadow: 0 6px 15px rgba(126, 110, 172, 0.15);
+    color: var(--texto-oscuro);
+}
+
+.btn-menu:active {
+    transform: scale(0.98);
+}
+
+
+
+@media (max-width: 576px) {
+    .grid-container {
+        grid-template-columns: 1fr;
+    }
+}

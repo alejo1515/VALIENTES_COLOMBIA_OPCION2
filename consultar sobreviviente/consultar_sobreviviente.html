@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultar Sobreviviente - Valientes Colombia</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="consultar_sobreviviente.css">
+</head>
+<body>
+   <div class="container">
+        <button type="button" id="volver-btn" class="btn">Volver</button>
+    </div>
+</div>
+
+
+
+<div class="card-consulta">
+    <div class="header-logo">
+        <img src="../logoa.png" alt="logotipo valientes" class="logo_flotante" width="250" height="auto">
+        
+    </div>
+
+    <div class="card-body p-4 p-md-5">
+        <h2>Consulta de Sobrevivientes</h2>
+
+        <div class="search-container">
+            <form id="consultaform" class="input-group">
+                <input id="id_busqueda" type="text" name="busqueda"
+                       class="form-control form-control-search"
+                       placeholder="Buscar por Nombre o número de ID...">
+                <button type="submit" class="btn btn-search">
+                    <i class="bi bi-search"></i> Buscar
+                </button>
+            </form>
+        </div>
+
+        <!-- Mensaje de estado -->
+        <div id="mensaje-estado" class="text-center text-muted mt-3" style="display:none;"></div>
+
+        <div class="table-container shadow-sm mt-3">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Fecha Nac.</th>
+                        <th>Lugar Nac.</th>
+                        <th>Edad</th>
+                        <th>Ciudad</th>
+                        <th>EPS</th>
+                        <th>Afiliación</th>
+                        <th>Educación</th>
+                        <th>Ocupación</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-resultados">
+                    <tr>
+                        <td colspan="11" class="text-center text-muted">
+                            Ingrese un nombre o ID para buscar.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="text-center mt-4">
+        
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

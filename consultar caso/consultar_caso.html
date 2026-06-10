@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta Integral - Valientes</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="consultas_caso.css" rel="stylesheet">
+</head>
+<body style="background-color: #f4f4f9;">
+
+<div class="container">
+    <button id="volver-btn" class="btn btn-secondary">
+        volver
+    </button>
+</div>
+
+
+<div class="container mt-5">
+
+
+
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-lg border-0" style="border-radius: 20px; background-color: #b0b3c6;">
+                
+              
+                    <h4 class="mb-0 mt-2">CONSULTA DE CASO INTEGRAL</h4>
+             <form id="formulario_busqueda">
+<div class="row align-items-end">
+    <div class="col-md-7">
+        <label class="form-label">Buscar por Nombre Completo</label>
+        <div class="input-group">
+            <input type="text" id="buscador_nombre" class="form-control" placeholder="Escriba para buscar...">
+            <button class="btn btn-search-lila" type="button" id="btn_buscar_u">
+                <i class="bi bi-search"></i> Buscar
+            </button>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <label class="form-label">ID Vinculado (Automático)</label>
+        <input type="text" id="user_id" name="user_id" class="form-control input-locked" readonly placeholder="ID único" required>
+    </div>
+</div>
+<div id="lista_sugerencias" class="list-group mt-2 suggestion-box" style="display: none;"></div>
+</form>
+
+                
+                <div class="card-body p-4 bg-white">
+                    <form id="formBusqueda" class="input-group mb-4">
+                        <input type="text" id="busqueda" name="busqueda" class="form-control" placeholder="Nombre de caso o ID (FK)..." required>
+                        <button class="btn btn-primary" type="submit" style="background-color: #7e6eac; border: none;">
+                            <i class="bi bi-search"></i> Buscar
+                        </button>
+                    </form>
+
+                    <div class="info-grid" id="tabla-resultados">
+                        <div class="info-card">
+                            <span class="info-label">ID del Caso:</span>
+                            <span id="td-caso-id" class="info-value">---</span>
+                        </div>
+                        <div class="info-card">
+                            <span class="info-label">ID Sobreviviente (FK):</span>
+                            <span id="td-user-id" class="info-value">---</span>
+                        </div>
+                        <div class="info-card">
+                            <span class="info-label">Estado:</span>
+                            <span id="td-estado-caso" class="info-value">---</span>
+                        </div>
+                        <div class="info-card">
+                            <span class="info-label">Repatriación:</span>
+                            <span id="td-repatriacion" class="info-value">---</span>
+                        </div>
+                        <div class="info-card">
+                            <span class="info-label">Atención:</span>
+                            <span id="td-atencion" class="info-value">---</span>
+                        </div>
+                        <div class="info-card">
+                            <span class="info-label">Tipificación:</span>
+                            <span id="td-tipificacion" class="info-value">---</span>
+                        </div>
+                        <div class="info-card">
+                            <span class="info-label">Entidad:</span>
+                            <span id="td-entidad" class="info-value">---</span>
+                        </div>
+                        <div class="info-card">
+                            <span class="info-label">Riesgo:</span>
+                            <span id="td-riesgo" class="info-value">---</span>
+                        </div>
+                        <div class="info-card">
+                            <span class="info-label">Denuncio:</span>
+                            <span id="td-denuncio" class="info-value">---</span>
+                        </div>
+                        <div class="info-card">
+                            <span class="info-label">Detalles Denuncia:</span>
+                            <span id="td-detalles" class="info-value">---</span>
+                        </div>
+                        <div class="info-card">
+                            <span class="info-label">Ruta Activa:</span>
+                            <span id="td-ruta" class="info-value">---</span>
+                        </div>
+                        <div class="info-card">
+                            <span class="info-label">Dinero Recibido:</span>
+                            <span id="td-dinero" class="info-value">---</span>
+                        </div>
+                        <div class="info-card">
+                            <span class="info-label">Medio de Pago:</span>
+                            <span id="td-medio-pago" class="info-value">---</span>
+                        </div>
+                        <div class="info-card">
+                            <span class="info-label">Oferta:</span>
+                            <span id="td-oferta" class="info-value">---</span>
+                        </div>
+                        <div class="info-card">
+                            <span class="info-label">Aerolínea:</span>
+                            <span id="td-aerolinea" class="info-value">---</span>
+                        </div>
+                        <div class="info-card">
+                            <span class="info-label">Trayecto:</span>
+                            <span id="td-trayecto" class="info-value">---</span>
+                        </div>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button type="button" id="btnEliminar" class="btn btn-danger w-100 py-2" disabled>
+                            <i class="bi bi-trash"></i> Eliminar Caso Encontrado
+                        </button>
+                    </div>
+                </div> 
+            </div> 
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="app.js"></script>
+</body>
+</html>

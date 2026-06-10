@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seguimiento Trimestral - Valientes Colombia</title>
+    <link rel ="stylesheet" href="estilocss.css" >
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+</head>
+<body>
+    
+<div class="container">
+<header class="top-bar" style="display: flex; align-items: flex-start; width: 100%; padding: 3px 0px;">
+    <button id="volver-btn" class="btn-regresar">
+        <i class="bi bi-arrow-left"></i> Volver
+    </button>
+    
+
+</div>
+
+
+<div class="container2">
+    <div class="top-search-bar">
+        <h3>Registro de Éxito Trimestral</h3>
+        
+    
+          
+
+
+
+<form id="formulario_busqueda">
+<div class="row align-items-end">
+    <div class="col-md-7">
+        <label class="form-label">Buscar por Nombre Completo</label>
+        <div class="input-group">
+            <input type="text" id="buscador_nombre" class="form-control" placeholder="Escriba para buscar...">
+            <button class="btn btn-search-lila" type="button" id="btn_buscar_u">
+                <i class="bi bi-search"></i> Buscar
+            </button>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <label class="form-label">ID Vinculado (Automático)</label>
+        <input type="text" id="user_id" name="user_id" class="form-control input-locked" readonly placeholder="ID único" required>
+    </div>
+</div>
+<div id="lista_sugerencias" class="list-group mt-2 suggestion-box" style="display: none;"></div>
+</form>
+
+
+
+
+
+    <form id="formSeguimiento" class="card-formulario">
+    <h2>Registro de Seguimiento Integral</h2>
+    <div class="seccion">
+        <label for="user_identifier"   >ID del Sobreviviente:</label>
+        <input type="text" id="user_identifier" class="custom-input" placeholder="Ingrese ID del usuario" required>
+        
+    </div>
+
+    <div class="seccion-hitos">
+        <h3>Seguimiento de Bienestar</h3>
+        <div class="grid-hitos">
+            <div class="input-group" ><input type="number" id="SALUD_FISICA" min="1" max="3" value="1"><label>Salud Física</label></div>
+            <div class="input-group"><input type="number" id="SALUD_MENTAL" min="1" max="3" value="1"><label>Salud Mental</label></div>
+            <div class="input-group"><input type="number" id="SEGURIDAD_PROTECCION" min="1" max="3" value="1"><label>Seguridad y Protección</label></div>
+            <div class="input-group"><input type="number" id="VIVIENDA" min="1" max="3" value="1"><label>Vivienda</label></div>
+            <div class="input-group"><input type="number" id="INGRESOS_MEDIOS_VIDA" min="1" max="3" value="1"><label>Ingresos/Medios de Vida</label></div>
+            <div class="input-group"><input type="number" id="EDUCACION_BASICA" min="1" max="3" value="1"><label>Educación Básica</label></div>
+            <div class="input-group"><input type="number" id="REDES_APOYO" min="1" max="3" value="1"><label>Redes de Apoyo</label></div>
+            <div class="input-group"><input type="number" id="AUTONOMIA" min="1" max="3" value="1"><label>Autonomía</label></div>
+        </div>
+    </div>
+
+    <div class="seccion">
+        <div class="MOTIVACION_EXPECTATIVAS">
+        <label>Motivación y Expectativas:   </label>
+        <textarea  id="MOTIVACION_EXPECTATIVAS"  name="MOTIVACION_EXPECTATIVAS" rows="3" placeholder="Describa la motivación actual..."></textarea>
+        </div>
+
+        <div class="NOTA_SUCESO">
+        <label>Nota del Suceso:</label>
+        <textarea id="NOTA_SUCESO" name="NOTA_SUCESO" rows="2" placeholder="Resumen del evento..."></textarea>
+        </div>
+
+        <div class="APOYO_EQUIPO">
+        <label>Apoyo del Equipo:</label>
+        <textarea id="APOYO_EQUIPO" name="APOYO_EQUIPO" rows="2" placeholder="Acciones realizadas por el equipo..."></textarea>
+    </div>
+<div class="DIFICULTADES_EQUIPO">
+        <label>Dificultades del Equipo:</label>
+        <textarea id="DIFICULTADES_EQUIPO" name="DIFICULTADES_EQUIPO" rows="2" placeholder="Retos presentados..."></textarea>
+    </div>
+
+    <button type="submit" class="btn-guardar">Registrar Seguimiento</button>
+</form>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="app.js">
+    
+</script>
+
+</body>
+</html>

@@ -1,0 +1,183 @@
+/* Importación de fuente moderna y ligera */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600&display=swap');
+
+:root {
+    --azul-valientes: #4A90E2;
+    --azul-soft: #f0f7ff;
+    --blanco-cristal: rgba(255, 255, 255, 0.85);
+    --blanco-puro: #ffffff;
+    --texto-oscuro: #2d3748;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: var(--texto-oscuro);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    
+    background-color: #f8fafc;
+    background-image: url('../logoa.png');
+    background-repeat: no-repeat;
+    background-position: center 30%; /* Ajusta la posición vertical del fondo */
+    background-attachment: fixed;
+    background-size: 35%;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../logoa.png');
+    background-repeat: no-repeat;
+    background-position: center 30%;
+    background-size: 90%;
+    opacity: 0.1; 
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* Contenedor del botón volver */
+.container {
+    position: absolute;
+    top: 25px;
+    left: 25px;
+    z-index: 100;
+}
+
+#volver-btn {
+    background: var(--blanco-puro);
+    border: 1px solid #e2e8f0;
+    color: var(--azul-valientes);
+    padding: 8px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#volver-btn:hover {
+    background: var(--azul-soft);
+    transform: translateX(-5px);
+    border-color: var(--azul-valientes);
+}
+
+/* TARJETA DE CONSULTA (EFECTO CRISTAL) */
+.card-consulta {
+    background: var(--blanco-cristal);
+    backdrop-filter: blur(12px); /* Desenfoca el logo de fondo para leer mejor */
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    max-width: 1000px; /* Aumentado para que la tabla sea cómoda */
+    margin: 40px 20px;
+    animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.header-logo {
+    background-color: rgba(248, 250, 252, 0.8);
+    padding: 25px;
+    text-align: center;
+    border-bottom: 1px solid rgba(237, 242, 247, 0.5);
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
+}
+
+.logo_flotante {
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+}
+
+.card-body {
+    padding: 2.5rem !important;
+}
+
+h2 {
+    font-weight: 600;
+    text-align: center;
+    color: var(--azul-valientes);
+    margin-bottom: 25px;
+}
+
+/* BUSCADOR */
+.search-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-control-search {
+    border: 2px solid #edf2f7;
+    border-top-left-radius: 14px;
+    border-bottom-left-radius: 14px;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.9);
+    transition: all 0.3s ease;
+}
+
+.form-control-search:focus {
+    border-color: var(--azul-valientes);
+    box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.1);
+    background: var(--blanco-puro);
+    outline: none;
+}
+
+.btn-search {
+    background: var(--azul-valientes);
+    color: var(--blanco-puro);
+    border: none;
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
+    padding: 12px 24px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-search:hover {
+    background: #357ABD;
+    filter: brightness(1.05);
+}
+
+/* TABLA DE RESULTADOS */
+.table-container {
+    background: var(--blanco-puro);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #aac9f3;
+}
+
+.table {
+    margin-bottom: 0;
+    color: var(--texto-oscuro);
+}
+
+.table th {
+    background-color: var(--azul-soft);
+    color: var(--azul-valientes);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 14px 12px;
+    border-bottom: 2px solid #92a5bd;
+}
+
+.table td {
+    padding: 14px 12px;
+    font-size: 0.9rem;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(74, 144, 226, 0.05);
+}

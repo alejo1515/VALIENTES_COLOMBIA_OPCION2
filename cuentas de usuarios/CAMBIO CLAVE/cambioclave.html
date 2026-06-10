@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actualizar Seguridad - Valientes</title>
+    <link rel="stylesheet" href="cambioclave.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</head>
+<body>
+    <button type="button" id="volver-btn" class="btn">
+        <i class="bi bi-arrow-left"></i> Volver
+    </button>
+
+<div class="main-wrapper">
+    <div class="card-menu">
+        <div class="header-logo">
+            
+            <div class="logo-text">SEGURIDAD DE CUENTA</div>
+        </div>
+
+        <div class="card-body">
+           
+            <h2>Actualizar Clave</h2>
+            <p class="text-secondary">Valientes Colombia - Gestión de Seguridad</p>
+            
+            <form id="formCambioClave">
+                <div class="input-group">
+                    <label for="username">Usuario</label>
+                    <input type="text" id="username" placeholder="Tu usuario" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="nombreCompleto">Nombre Completo</label>
+                    <input type="text" id="nombreCompleto" placeholder="Nombre registrado" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="ciudadNacimiento">Ciudad de Nacimiento</label>
+                    <input type="text" id="ciudadNacimiento" placeholder="Respuesta de seguridad" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="nuevaClave">Nueva Contraseña</label>
+                    <input type="password" id="nuevaClave" placeholder="Mínimo 6 caracteres" required>
+                </div>
+
+                <button type="submit" class="btn-actualizar">Confirmar Cambio</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

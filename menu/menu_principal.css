@@ -1,0 +1,163 @@
+
+        body {
+            background: linear-gradient(135deg, #0a2977 0%, #c8c8e0 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', sans-serif;
+            padding: 20px;
+        }
+
+.logo_flotante {
+    display: block; 
+    margin: 0 auto; 
+    width: 30%;
+    animation: flotar 5s ease-in-out infinite;
+}
+
+        @keyframes flotar {
+
+            0%, 100%{
+                transform: translateY(0);}
+                50%{
+                    transform: translateY(-10px);
+                }
+            }
+        
+        .card-menu {
+            background-color: #8890c5; 
+            border-radius: 20px;
+            border: none;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            max-width: 900px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .header-logo {
+            background-color: #1a1c31; 
+            padding: 20px;
+            text-align: center;
+        }   
+
+        .logo-text {
+            color: #7a96ff;
+            font-weight: bold;
+            font-size: 1.4rem;
+            letter-spacing: 2px;
+        }
+#volver-btn {
+    display: block !important;
+    position: fixed !important; /* Lo fija a la pantalla, no al card */
+    top: 10px !important;
+    left: 10px !important;
+    background: rgb(221, 196, 196) !important; /* Color chillón para encontrarlo */
+    color: white !important;
+    z-index: 10000 !important;
+    padding: 20px;
+
+
+    .volver-btn{
+    display: flex;
+    margin: 25px;
+  margin-top  :auto ;
+margin-bottom: auto;
+margin-left: auto;
+    background-color: #7e6eac;
+    border: none;
+    color: rgb(255, 255, 255);
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+z-index: 999    ;
+}
+
+.volver-btn:hover {
+    background-color: #6a5a96;
+   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+.volver-btn-clean {
+    position: absolute; /* Para que flote en la esquina */
+    top: 25px;
+    left: 25px;
+    background: #ffffff;
+    border: 1px solid #edf2f7;
+    color: #6f42c1; /* El púrpura de tu marca */
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    z-index: 999;
+}
+
+.volver-btn-clean:hover {
+    background: #f8f9ff;
+    border-color: #6f42c1;
+    transform: translateX(-3px); 
+    box-shadow: 0 4px 10px rgba(111, 66, 193, 0.1);
+}
+
+
+}
+        
+    
+        .btn-menu {
+            background-color: #7e6eac; 
+            border: none;
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+            gap: 8px;
+        }
+
+        .btn-menu:hover {
+            background-color: #4b11e9;
+            transform: translateY(-5px);
+            color: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-menu i {
+            font-size: 1.5rem;
+        }
+
+        /* Botón de cerrar sesión (Rojo suave/oscuro) */
+        .btn-danger-custom {
+            background-color: #4a1c31; 
+            border: none;
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 20px;
+            transition: 0.3s;
+        }
+
+        .btn-danger-custom:hover {
+            background-color: #6d2a48;
+            color: white;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            padding: 10px;
+        }
+    

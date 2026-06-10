@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Estadísticas - Valientes Colombia</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="graficos.css">
+</head>
+<body>
+    
+    <button id="volver-btn" class="volver-btn">
+        <i class="bi bi-arrow-left"></i> Volver
+    </button>
+
+    <div class="container-principal">
+        <div class="card-busqueda-integral">
+            
+            <form id="formulario_busqueda" class="seccion-busqueda">
+                <div class="row current-search-row">
+                    
+                    <div class="col-md-5">
+                        <label class="form-label">Buscar por Nombre Completo</label>
+                        <input type="text" id="buscador_nombre" class="form-control-lila" placeholder="Escriba para buscar...">
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label class="form-label">ID Vinculado</label>
+                        <input type="text" id="user_id" name="user_id" class="form-control input-locked" readonly placeholder="ID único" required>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <button class="btn-search-lila" type="button" id="btn_buscar_u">
+                            <i class="bi bi-search"></i> Buscar
+                        </button>
+                    </div>
+
+                </div>
+                <div id="lista_sugerencias" class="list-group mt-2 suggestion-box" style="display: none;"></div>
+            </form>
+
+            <div class="divisor-or">
+                <span>O también</span>
+            </div>
+
+            <form id="consultaid" class="seccion-consulta">
+                <label class="form-label">Consulta Rápida por ID</label>
+                <div class="search-group-modern">
+                    <input type="text" id="user_identifier" class="custom-input-modern" placeholder="Ingrese el ID...">
+                    <button id="btnBuscar" class="search-btn-modern" type="submit">
+                        <span>Consultar</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                        </svg>
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <section class="content-grafico-max">
+        <h1>Valientes Colombia progreso</h1>
+        <div class="canvas-container">
+            <canvas id="myChart"></canvas>
+        </div>
+    </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="app.js"></script>
+</body>
+</html>

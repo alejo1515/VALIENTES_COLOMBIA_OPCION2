@@ -1,0 +1,140 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600&display=swap');
+
+:root {
+    --azul-principal: #024899;
+    --azul-hover: #254a6e;
+    --azul-claro: #a0b3c9;
+    --blanco-transparente: rgba(255, 255, 255, 0.274); /* Control de transparencia */
+    --blanco-puro: #ffffff;
+    --gris-suave: rgba(189, 189, 189, 0.8);
+    --texto: #334155;
+}
+
+body {
+
+    background-color: #d2dae7;
+    background-image: url('../logoa.png'); 
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+    background-size: 90%;
+    background-position-y: 35%;  
+    
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: var(--texto);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    margin: 0;
+}
+
+/* Card con efecto Glassmorphism */
+.card-registro {
+    background: var(--blanco-transparente);
+    backdrop-filter: blur(15px); 
+    -webkit-backdrop-filter: blur(15px);
+    
+    border-radius: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.4); 
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+    width: 100%;
+    max-width: 850px;
+    overflow: hidden;
+    animation: fadeIn 0.8s ease-out;
+}
+
+/* Cabecera sutil */
+.header-logo {
+    background-color: var(--gris-suave);
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(237, 242, 247, 0.5);
+}
+
+.logo-placeholder {
+    letter-spacing: 4px;
+    font-weight: 600;
+    color: var(--azul-principal);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+/* Campos de entrada con mayor contraste */
+.form-control, .form-select {
+    border: 2px solid rgba(147, 193, 214, 0.7);
+    border-radius: 14px;
+    padding: 12px 16px;
+    background-color: rgba(255, 255, 255, 0.9); 
+    font-size: 0.95rem;
+    color: var(--texto);
+    transition: all 0.3s ease;
+}
+
+/* Efectos de interacción refinados */
+.form-control:hover, .form-select:hover {
+    background-color: var(--blanco-puro);
+    border-color: #e2e8f0;
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: var(--blanco-puro);
+    border-color: var(--azul-principal);
+    box-shadow: 0 10px 20px rgba(74, 144, 226, 0.1);
+    transform: translateY(-2px);
+    outline: none;
+}
+
+.btn-valientes {
+    background: linear-gradient(135deg, var(--azul-principal) 0%, #24c2c2 100%);
+    color: white;
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 16px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    margin-top: 20px;
+}
+
+.btn-valientes:hover {
+    transform: scale(1.02);
+    box-shadow: 0 15px 30px rgba(38, 192, 231, 0.918);
+    filter: brightness(1.05);
+}
+
+/* Botón volver minimalista */
+#volver-btn {
+      display: block !important;
+    position: fixed !important; /* Lo fija a la pantalla, no al card */
+    top: 10px !important;
+    left: 10px !important;
+       z-index: 10000 !important;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(226, 232, 240, 0.5);
+    color: var(--azul-principal);
+    border-radius: 12px;
+    padding: 8px 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+}
+
+#volver-btn:hover {
+    background-color: var(--blanco-puro);
+    transform: translateX(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+/* Animación de entrada */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Caso - Valientes Colombia</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+   <link href="registrar_caso.css" rel="stylesheet">
+</head>
+<body>
+
+
+</div>
+<div class="container">
+<button id="volver-btn" class="btn btn-secondary">
+
+volver
+</button>
+</div>
+
+<div class="card-caso">
+    <div class="header-logo">
+        <div class="logo-text"> VALIENTES COLOMBIA</div>
+    </div>
+    
+    <div class="card-body p-4 p-md-5">
+        <h2>Registro de Caso Nuevo</h2>
+        <div class="section-title">Vinculación de Sobreviviente</div>
+
+
+<form id="formulario_busqueda">
+<div class="row align-items-end">
+    <div class="col-md-7">
+        <label class="form-label">Buscar por Nombre Completo</label>
+        <div class="input-group">
+            <input type="text" id="buscador_nombre" class="form-control" placeholder="Escriba para buscar...">
+            <button class="btn btn-search-lila" type="button" id="btn_buscar_u">
+                <i class="bi bi-search"></i> Buscar
+            </button>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <label class="form-label">ID Vinculado (Automático)</label>
+        <input type="text" id="user_id" name="user_id" class="form-control input-locked" readonly placeholder="ID único" required>
+    </div>
+</div>
+<div id="lista_sugerencias" class="list-group mt-2 suggestion-box" style="display: none;"></div>
+</form>
+
+
+<form id="formulario_caso">
+            <div class="row">
+    <div class="col-md-6">
+        <label class="form-label">USER_ID (ID Sobreviviente)</label>
+        <input type="text" id="user_id" name="user_id" class="form-control" placeholder="Debe existir en Sobrevivientes" required>
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">NOMBRE DE CASO</label>
+        <input type="text" id="nombre_caso" name="NOMBRE_CASO" class="form-control" placeholder="Escriba el nombre del caso" required>
+    </div>
+</div>
+
+<div class="section-title">Detalles del Caso</div>
+<div class="row">
+    <div class="col-md-6">
+        <label class="form-label">Estado del Caso</label>
+        <textarea id="estado_caso" name="estado_caso" class="form-control" rows="2"></textarea>
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Tipo de Atención</label>
+        <textarea id="tipo_atencion" name="tipo_atencion" class="form-control" rows="2"></textarea>
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Tipificación</label>
+        <textarea id="tipificacion" name="tipificacion" class="form-control" rows="2"></textarea>
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Entidad remitente</label>
+        <textarea id="entidad_remitente" name="entidad_remitente" class="form-control" rows="2"></textarea>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <label class="form-label">Nivel de Riesgo</label>
+        <select id="nivel_riesgo" name="nivel_riesgo" class="form-select">
+            <option value="Bajo">Bajo</option>
+            <option value="Medio">Medio</option>
+            <option value="Alto">Alto</option>
+            <option value="Crítico">Crítico</option>
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Repatriación Avión Solidario</label>
+        <select id="repatriacion" name="repatriacion_avion_solidario" class="form-select">
+            <option value="0">No</option>
+            <option value="1">Sí</option>
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Ruta Activa</label>
+        <select id="ruta_activa" name="ruta_activa" class="form-select">
+            <option value="0">No</option>
+            <option value="1">Sí</option>
+        </select>
+    </div>
+</div>
+
+<div class="section-title">Denuncia y Seguimiento Financiero</div>
+<div class="row">
+    <div class="col-md-4">
+        <label class="form-label">¿Realizó Denuncia?</label>
+        <select id="denuncio" name="denuncio" class="form-select">
+            <option value="0">No</option>
+            <option value="1">Sí</option>
+        </select>
+    </div>
+    <div class="col-md-8">
+        <label class="form-label">Detalles de la Denuncia</label>
+        <input type="text" id="detalles_denuncia" name="detalles_denuncia" class="form-control">
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <label class="form-label">¿Recibió Dinero?</label>
+        <select id="recibio_dinero" name="recibio_dinero" class="form-select">
+            <option value="0">No</option>
+            <option value="1">Sí</option>
+        </select>
+    </div>
+    <div class="col-md-8">
+        <label class="form-label">Medios por los que recibió dinero</label>
+        <input type="text" id="medios_recibido_dinero" name="medios_recibido_dinero" class="form-control">
+    </div>
+</div>
+
+<div class="section-title">Logística y Captación</div>
+<div class="row">
+    <div class="col-md-6">
+        <label class="form-label">Oferta de Captación</label>
+        <textarea id="oferta_captacion" name="oferta_captacion" class="form-control" rows="2"></textarea>
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Aerolínea Usada</label>
+        <input type="text" id="aerolinea_usada" name="aerolinea_usada" class="form-control">
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <label class="form-label">Trayecto de Vuelo</label>
+        <input type="text" id="trayecto_vuelo" name="trayecto_vuelo" class="form-control">
+    </div>
+</div>
+
+            <div class="mt-4">
+                <button id="btn-registrar" type="submit" class="btn btn-valientes">Guardar Información del Caso</button>
+            </div>
+        </form>
+
+       
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+ <script src="app.js"></script>
+</body>
+</html>

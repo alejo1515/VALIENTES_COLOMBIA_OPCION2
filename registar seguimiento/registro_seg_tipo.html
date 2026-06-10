@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Principal - Valientes Colombia</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="menu_principal.css">
+</head>
+<body>
+
+<div class="volver-container">
+    <button id="volver-btn" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Volver
+    </button>
+</div>
+
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="row w-100 justify-content-center">
+        <div class="col-md-10 col-lg-9">
+            
+            <div class="card-menu shadow-lg border-0">
+                
+                <div class="card-body p-4 p-md-5 text-center">
+
+                    <img src="../logoa.png" alt="logotipo valientes" class="logo_flotante mb-3" width="250" height="auto">
+
+                    <h2>Panel de Gestión</h2>
+                    <p class="text-secondary mb-4">Bienvenida al sistema de registro de control de seguimientos</p>
+                    
+                    <div class="grid-container">
+                        <button id="registro_microbutton" class="btn btn-menu">
+                            <i class="bi bi-journal-check"></i>
+                            Registrar Seguimiento micro
+                        </button>
+
+                        <button id="registro_macrobutton" class="btn btn-menu">
+                            <i class="bi bi-journal-check"></i>
+                            Registro Seguimiento macro
+                        </button>
+
+                        <button id="grafico_macrobutton" class="btn btn-menu">
+                            <i class="bi bi-bar-chart-line-fill"></i>
+                            Gráfico macro seguimiento general
+                        </button>
+
+                        <button id="grafico_macrobuttonindividual" class="btn btn-menu">
+                            <i class="bi bi-bar-chart-line-fill"></i>
+                            Gráfico macro seguimiento por factor
+                        </button>
+
+                        <button id="grafico_microbutton" class="btn btn-menu">
+                            <i class="bi bi-bar-chart-line-fill"></i>
+                            Gráfico micro seguimiento general
+                        </button>
+                    
+                        <button id="grafico_microbuttonindividual" class="btn btn-menu">
+                            <i class="bi bi-bar-chart-line-fill"></i>
+                            Gráfico micro seguimiento por factor
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

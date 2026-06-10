@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seguimiento Trimestral - Valientes Colombia</title>
+    <link rel ="stylesheet" href="estilocss.css" >
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+</head>
+<body>
+
+<div class="container">
+<header class="top-bar" style="display: flex; align-items: flex-start; width: 100%; padding: 3px 0px;">
+    <button id="volver-btn" class="btn-regresar">
+        <i class="bi bi-arrow-left"></i> Volver
+    </button>
+</header>
+</div>
+
+
+
+    
+<div class="container2">
+    <div class="top-search-bar">
+        <h3>Registro de progreso Trimestral</h3>
+        <form id="formulario_busqueda">
+<div class="row align-items-end">
+    <div class="col-md-7">
+        <label class="form-label">Buscar por Nombre Completo</label>
+        <div class="input-group">
+            <input type="text" id="buscador_nombre" class="form-control" placeholder="Escriba para buscar...">
+            <button class="btn btn-search-lila" type="button" id="btn_buscar_u">
+                <i class="bi bi-search"></i> Buscar
+            </button>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <label class="form-label">ID Vinculado </label>
+        <input type="text" id="user_id" name="user_id" class="form-control input-locked" readonly placeholder="ID único" required>
+    </div>
+</div>
+<div id="lista_sugerencias" class="list-group mt-2 suggestion-box" style="display: none;"></div>
+</form>
+
+        <div class="search-group">
+            <input type="text" id="user_identifier" class="custom-input" placeholder="ID o Nombre del Sobreviviente...">
+            <div style="border-left: 1px solid #eee; margin: 0 10px;"></div>
+            <select id="selectorProyecto" class="custom-input" style="max-width: 200px; cursor: pointer;">
+                <option value="">Seleccione Proyecto</option>
+                <option value="emprendimiento">Emprendimiento</option>
+                <option value="estudio">Estudio</option>
+                <option value="trabajo">Trabajo Estable</option>
+                <option value="hogar">Hogar</option>
+                <option value="bienestar">Bienestar Personal</option>
+            </select>
+        </div>
+    </div>
+
+    <form id="formSeguimiento" class="form-card">
+        <div style="margin-bottom: 25px;">
+            <label style="font-weight: 600; display: block; margin-bottom: 8px;">Motivación o Expectativas (Dato Fijo)</label>
+            <textarea id="motivacionFija" class="custom-input" placeholder="Describa la motivación actual del usuario..."></textarea>
+        </div>
+
+        <div id="contenedorHitos" class="contenedorHitos" style="display: none;">
+            <h4 id="tituloProyecto" style="text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #f0ecf7; padding-bottom: 10px;">
+                Hitos de Progreso
+            </h4>
+            
+            <div id="listaHitos" class="hitos-grid">
+                </div>
+
+            <div style="margin-top: 30px; border-top: 1px solid #663df8b4; padding-top: 20px;">
+                <button type="submit" id="btnGuardar" class="search-btn" style="width: 100%; justify-content: center; padding: 15px;">
+                    Guardar Registro Trimestral
+                </button>
+            </div>
+        </div>
+        
+        <div id="mensajeVacio" style="text-align: center; color: #7c7bbd; padding: 40px;">
+            <p>Seleccione un tipo de proyecto para cargar los indicadores de éxito.</p>
+        </div>
+    </form>
+</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
