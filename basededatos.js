@@ -16,7 +16,7 @@ async function getConnection() {
         driver: sqlite3.Database
     });
 
-    // Forzar a SQLite a respetar las restricciones de llaves foráneas (ON DELETE CASCADE)
+    
     await dbInstance.get('PRAGMA foreign_keys = ON');
 
     return dbInstance;

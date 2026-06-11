@@ -159,31 +159,27 @@ async function registro(registror) {
             registror.NIVEL_EDUCATIVO
         ];
         
-        const [result] = await conn.query(sql, valores);
+        const result = await conn.run(sql, valores);
 
-        if (result.affectedRows > 0) {
+        if (result.changes > 0) {
             console.log("Registro exitoso.");
-            return { success: true, id: result.insertId };
+  return { success: true, id: result.lastID };
         } else {
             return { success: false, error: "No se pudo registrar el sobreviviente." };
         }
 
     } catch (error) {
-        console.error("Error en la consulta SQL:", error);
+        console.error("Error en la consulta SQL de SQLite:", error);
         
-        if (error.code === 'ER_DUP_ENTRY') {
+          if (error.code === 'SQLITE_CONSTRAINT' || (error.message && error.message.includes('UNIQUE'))) {
             return { success: false, error: "El registro ya se encuentra en el sistema." };
         }
         
         return { success: false, error: error.message };
         
     } finally {
-        if (conn && typeof conn.release === 'function') {
-            conn.release();
-        }
     }
 }
-
 
 ipcMain.handle('registro', async (event, datos) => {
     try {
@@ -200,23 +196,23 @@ ipcMain.handle('registro', async (event, datos) => {
 async function ConsultarSobreviviente(textoBusqueda) {
     let conn; 
     try {
-      const  conn = await getConnection(); 
+        
+        conn = await getConnection(); 
         const busquedaLimpia = textoBusqueda.trim();
         
-        const sql = `SELECT * FROM sobrevivientes WHERE CAST(USER_ID AS CHAR) = ? OR NOMBRES LIKE ? LIMIT 1`;
+        const sql = `SELECT * FROM sobrevivientes WHERE CAST(USER_ID AS TEXT) = ? OR NOMBRES LIKE ? LIMIT 25`;
 
-        const valores = [busquedaLimpia, `%${busquedaLimpia}%` ];
-        const [rows] = await conn.query(sql, valores);
+        const valores = [busquedaLimpia, `%${busquedaLimpia}%`];
         
-        return rows; 
+        const rows = await conn.all(sql, valores);
+        
+        return rows; // Retorna un array con el sobreviviente o un array vacío [] si no hay coincidencias
     } catch (error) {
-        console.error("Error en SQL:", error);
+        console.error("Error en SQL de SQLite:", error);
         return []; 
     } finally {
-        if (conn) conn.release(); 
     }
 }
-
 
 // Handler para Consultar Sobreviviente
 ipcMain.handle('ConsultarSobreviviente', async (event, busqueda) => {
@@ -240,20 +236,21 @@ ipcMain.handle('ConsultarSobreviviente', async (event, busqueda) => {
 async function EliminarSobreviviente(id) {
     let conn;
     try {
-       const conn = await getConnection();
-       await conn.query('DELETE FROM caso WHERE USER_ID = ?', [id]);
-        const sql = 'DELETE FROM sobrevivientes WHERE USER_ID = ?';
-        const [result] = await conn.query(sql, [id]);
         
-        return result.affectedRows > 0;
+        conn = await getConnection();
+    
+        const sql = 'DELETE FROM sobrevivientes WHERE USER_ID = ?';
+    
+        const result = await conn.run(sql, [id]);
+        
+
+        return result.changes > 0; 
     } catch (error) {
-        console.error("Error en la base de datos al eliminar:", error);
+        console.error("Error en la base de datos al eliminar en SQLite:", error);
         throw error;
     } finally {
-        if (conn) conn.release();
     }
 }
-
 
 // Handler para Eliminar Sobreviviente 
 ipcMain.handle('EliminarSobreviviente', async (event, id) => {
@@ -277,27 +274,28 @@ async function buscarSobrevivientePorNombre(nombre) {
     let conn;
     try {
         conn = await getConnection();
- 
- 
+
         const sql = `
             SELECT USER_ID, NOMBRES
             FROM sobrevivientes 
             WHERE NOMBRES LIKE ? 
             LIMIT 10`; 
         
-        const [rows] = await conn.query(sql, [`%${nombre}%`]);
+        // 📌 CAMBIO: Usamos conn.all() en lugar de conn.query() para obtener el array plano directo
+        const rows = await conn.all(sql, [`%${nombre.trim()}%`]);
+        
+        // Retorna exactamente el formato que tu SweetAlert2 necesita leer
         return { success: true, resultados: rows };
     } catch (error) {
-        console.error("Error al buscar por nombre:", error);
-        return { success: false, error: error.message };
+        console.error("Error al buscar por nombre en SQLite:", error);
+        return { success: false, resultados: [], error: error.message };
     } finally {
-        if (conn) {
- 
-            if (typeof conn.release === 'function') conn.release();
-            else if (typeof conn.end === 'function') conn.end();
-        }
+        // Bloque libre de conn.release()
     }
 }
+
+
+
 //handler para buscar usuario por nombre en todas las paginas
 
 ipcMain.handle('buscarPorNombre', async (event, nombre) => {
@@ -318,17 +316,21 @@ async function registrarCaso(registroC) {
     try {
         conn = await getConnection(); 
 
-        const sqlValidar = "SELECT USER_ID  FROM sobrevivientes WHERE USER_ID = ?";
-        const [usuarioExiste] = await conn.query(sqlValidar, [registroC.USER_ID]);
+        const sqlValidar = "SELECT USER_ID FROM sobrevivientes WHERE USER_ID = ?";
+        
+        // 📌 CAMBIO 1: Usamos conn.get() porque solo queremos verificar un registro plano.
+        // Quitamos la destructuración [usuarioExiste].
+        const usuarioExiste = await conn.get(sqlValidar, [registroC.USER_ID]);
 
-        if (usuarioExiste.length === 0) {
-            // Si no hay resultados, devolvemos un error controlado
+        // En SQLite, conn.get() devuelve 'undefined' si no encuentra ninguna coincidencia
+        if (!usuarioExiste) {
             return { 
                 success: false, 
                 error: `El ID de sobreviviente ${registroC.USER_ID} no existe en la base de datos.` 
             };
         }
 
+        // 📌 CAMBIO 2: Cambiamos NOW() al final por CURRENT_TIMESTAMP (Estándar de SQLite)
         const sql = `INSERT INTO caso (
             NOMBRE_CASO, USER_ID, ESTADO_CASO, 
             REPATRIACION_AVION_SOLIDARIO, TIPO_ATENCION, TIPIFICACION, 
@@ -336,7 +338,7 @@ async function registrarCaso(registroC) {
             DETALLES_DENUNCIA, RUTA_ACTIVA, RECIBIO_DINERO, 
             MEDIOS_RECIBIDO_DINERO, OFERTA_CAPTACION, AEROLINEA_USADA, 
             TRAYECTO_VUELO, FECHA_CREACION
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())`;
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`;
         
         const valores = [
             registroC.NOMBRE_CASO,
@@ -357,30 +359,26 @@ async function registrarCaso(registroC) {
             registroC.TRAYECTO_VUELO
         ];
         
-        const [result] = await conn.query(sql, valores);
+        // 📌 CAMBIO 3: Usamos conn.run() para operaciones de inserción
+        const result = await conn.run(sql, valores);
 
-        if (result.affectedRows > 0) {
-            console.log("Registro exitoso.");
-            return { success: true, id: result.insertId };
+        // 📌 CAMBIO 4: Evaluamos con .changes y retornamos con .lastID
+        if (result.changes > 0) {
+            console.log("Caso registrado con éxito.");
+            return { success: true, id: result.lastID };
         } else {
             return { success: false, message: "No se pudo registrar." };
         }
 
     } catch (error) {
-        console.error("Error en la consulta SQL:", error);
+        console.error("Error en la consulta SQL de SQLite:", error);
         return { success: false, error: error.message };
     } finally {
-      
-        if (conn) {
-            if (typeof conn.release === 'function') {
-                conn.release();
-            } else if (typeof conn.end === 'function') {
-                conn.end();
-            }
-        }
+        // Bloque libre de conn.release()
     }
-}
-    // handler registrarcaso
+}    // handler registrarcaso
+
+
 
 ipcMain.handle('registrarCaso', async (event, datos) => {
     try {
@@ -400,27 +398,30 @@ ipcMain.handle('registrarCaso', async (event, datos) => {
 async function ConsultarCaso(textoBusqueda) {
     let conn; 
     try {
-      const  conn = await getConnection(); 
+        // 📌 CORRECCIÓN: Quitamos el 'const' duplicado para usar la variable 'let' declarada arriba
+        conn = await getConnection(); 
         const busquedaLimpia = textoBusqueda.trim();
         
+        // 📌 CAMBIO 1: Cambiamos AS CHAR por AS TEXT para que SQLite procese la conversión correctamente
         const sql = `SELECT * FROM caso
-WHERE CAST(USER_ID AS CHAR) = ? 
-   OR CAST(CASO_ID AS CHAR) LIKE ? 
-   OR NOMBRE_CASO LIKE ? 
-LIMIT 1;`;
+                     WHERE CAST(USER_ID AS TEXT) = ? 
+                        OR CAST(CASO_ID AS TEXT) LIKE ? 
+                        OR NOMBRE_CASO LIKE ? 
+                     LIMIT 1;`;
 
         const valores = [busquedaLimpia, `%${busquedaLimpia}%`, `%${busquedaLimpia}%`];
-        const [rows] = await conn.query(sql, valores);
         
-        return rows; 
+        // 📌 CAMBIO 2: Usamos conn.all() y removemos la destructuración [rows] de MySQL
+        const rows = await conn.all(sql, valores);
+        
+        return rows; // Retorna un array con el caso encontrado o un array vacío [] si no hay resultados
     } catch (error) {
-        console.error("Error en SQL:", error);
+        console.error("Error en SQL de SQLite:", error);
         return []; 
     } finally {
-        if (conn) conn.release(); 
+        // Bloque libre: SQLite no requiere conn.release()
     }
-}
-// Handler para Consultar caso
+}// Handler para Consultar caso
 ipcMain.handle('ConsultarCaso', async (event, busqueda) => {
     try {
         console.log("=== Nueva Búsqueda Recibida ===");
@@ -444,18 +445,18 @@ async function EliminarCaso(casoId) {
         conn = await getConnection();
         
       
-        await conn.query('DELETE FROM seguimiento WHERE CASO_ID = ?', [casoId]);
+
 
  
         const sql = 'DELETE FROM caso WHERE CASO_ID = ?';
-        const [result] = await conn.query(sql, [casoId]);
+        const result = await conn.query(sql, [casoId]);
     
-        return result.affectedRows > 0;
+        return result.changes > 0;
     } catch (error) {
         console.error("Error al eliminar el caso:", error);
         throw error;
     } finally {
-        if (conn) conn.release(); 
+     
     }
 }
 
@@ -474,10 +475,14 @@ async function registrarSeguimiento(registroS) {
     try {
         conn = await getConnection(); 
         
-        const sql = 'INSERT INTO seguimiento_micro (USER_ID, PROYECTO_ACTUAL, MOTIVACION_EXPECTATIVAS, HITO_1, HITO_2, HITO_3, HITO_4, HITO_5, HITO_6, HITO_7, HITO_8, HITO_9, HITO_10, FECHA_CORTE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW());';
+        // 📌 CAMBIO 1: Reemplazamos NOW() por CURRENT_TIMESTAMP al final del INSERT
+        const sql = `INSERT INTO seguimiento_micro (
+            USER_ID, PROYECTO_ACTUAL, MOTIVACION_EXPECTATIVAS, 
+            HITO_1, HITO_2, HITO_3, HITO_4, HITO_5, HITO_6, HITO_7, HITO_8, HITO_9, HITO_10, 
+            FECHA_CORTE
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP);`;
         
         const valores = [
-            
             registroS.USER_ID,
             registroS.PROYECTO_ACTUAL,
             registroS.MOTIVACION_EXPECTATIVAS,
@@ -490,35 +495,27 @@ async function registrarSeguimiento(registroS) {
             registroS.HITO_7,
             registroS.HITO_8,
             registroS.HITO_9,
-            registroS.HITO_10,
-
-            
-            ];
+            registroS.HITO_10
+        ];
         
-        const [result] = await conn.query(sql, valores);
+        // 📌 CAMBIO 2: Usamos conn.run() en lugar de conn.query() y removemos los corchetes destructuradores
+        const result = await conn.run(sql, valores);
 
-        if (result.affectedRows > 0) {
-            console.log("Registro exitoso.");
-            return { success: true, id: result.insertId };
+        // 📌 CAMBIO 3: Evaluamos con .changes y retornamos el ID generado con .lastID
+        if (result.changes > 0) {
+            console.log("Registro de seguimiento micro exitoso.");
+            return { success: true, id: result.lastID };
         } else {
             return { success: false, message: "No se pudo registrar." };
         }
 
     } catch (error) {
-        console.error("Error en la consulta SQL:", error);
+        console.error("Error en la consulta SQL de SQLite:", error);
         return { success: false, error: error.message };
     } finally {
-      
-        if (conn) {
-            if (typeof conn.release === 'function') {
-                conn.release();
-            } else if (typeof conn.end === 'function') {
-                conn.end();
-            }
-        }
+        // 📌 CAMBIO 4: Bloque libre, SQLite gestiona y cierra la conexión compartida por sí solo
     }
-}
-    // handler registrar seguimiento
+}    // handler registrar seguimiento
 
 ipcMain.handle('registrarSeguimiento', async (event, datos) => {
     try {
@@ -539,10 +536,16 @@ async function registrarSeguimientoMacro(registroS) {
     try {
         conn = await getConnection(); 
         
-        const sql = 'INSERT INTO seguimiento_macro ( SALUD_FISICA, SALUD_MENTAL,SEGURIDAD_PROTECCION, VIVIENDA, INGRESOS_MEDIOS_VIDA, EDUCACION_BASICA, REDES_APOYO, AUTONOMIA, NOTA_SUCESO, APOYO_EQUIPO, DIFICULTADES_EQUIPO, USER_ID, fecha_Seguimiento) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , NOW());';
+        // 📌 CAMBIO 1: Cambiamos NOW() al final por CURRENT_TIMESTAMP (Estándar de SQLite)
+        const sql = `INSERT INTO seguimiento_macro ( 
+            SALUD_FISICA, SALUD_MENTAL, SEGURIDAD_PROTECCION, VIVIENDA, 
+            INGRESOS_MEDIOS_VIDA, EDUCACION_BASICA, REDES_APOYO, AUTONOMIA, 
+            NOTA_SUCESO, APOYO_EQUIPO, DIFICULTADES_EQUIPO, USER_ID, 
+            fecha_Seguimiento
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP);`;
         
+        // 📌 CAMBIO 2: Sincronizamos los valores exactos (12 marcadores '?' en el SQL)
         const valores = [
-            
             registroS.SALUD_FISICA,
             registroS.SALUD_MENTAL,
             registroS.SEGURIDAD_PROTECCION,
@@ -554,35 +557,28 @@ async function registrarSeguimientoMacro(registroS) {
             registroS.NOTA_SUCESO,
             registroS.APOYO_EQUIPO,
             registroS.DIFICULTADES_EQUIPO,
-            registroS.USER_ID,
-            registroS.fecha_Seguimiento,
-
-            ];
+            registroS.USER_ID
+            // Quitamos 'registroS.fecha_Seguimiento' porque CURRENT_TIMESTAMP se encarga de la fecha automáticamente
+        ];
         
-        const [result] = await conn.query(sql, valores);
+        // 📌 CAMBIO 3: Usamos conn.run() y removemos los corchetes [result]
+        const result = await conn.run(sql, valores);
 
-        if (result.affectedRows > 0) {
-            console.log("Registro exitoso.");
-            return { success: true, id: result.insertId };
+        // 📌 CAMBIO 4: Evaluamos con .changes y capturamos el ID generado con .lastID
+        if (result.changes > 0) {
+            console.log("Registro de seguimiento macro exitoso.");
+            return { success: true, id: result.lastID };
         } else {
             return { success: false, message: "No se pudo registrar." };
         }
 
     } catch (error) {
-        console.error("Error en la consulta SQL:", error);
+        console.error("Error en la consulta SQL de SQLite:", error);
         return { success: false, error: error.message };
     } finally {
-      
-        if (conn) {
-            if (typeof conn.release === 'function') {
-                conn.release();
-            } else if (typeof conn.end === 'function') {
-                conn.end();
-            }
-        }
+        // Bloque libre de conn.release()
     }
-}
-    // handler registrar seguimiento macro
+}    // handler registrar seguimiento macro
 
 ipcMain.handle('registrarSeguimientoMacro', async (event, datos) => {
     try {
@@ -646,37 +642,33 @@ const textosHitos = {
 
 
 //funcion para consultar seguimiento bajo grafico
-
 async function consultarSeguimiento(userIdentifier) { 
     let conn;
     try {
         conn = await getConnection();
         
-        
-        //  Filtro
+        // 📌 CAMBIO 1: Reemplazamos DATE_FORMAT, YEAR y MONTH por strftime() de SQLite
         const sql = `
             SELECT 
-                DATE_FORMAT(FECHA_CORTE, '%Y-%m') as mes_anio, 
+                strftime('%Y-%m', FECHA_CORTE) as mes_anio, 
                 AVG(porcentaje) as promedio 
             FROM seguimiento_micro
             WHERE USER_ID = ? 
-            GROUP BY YEAR(FECHA_CORTE), MONTH(FECHA_CORTE)
+            GROUP BY strftime('%Y-%m', FECHA_CORTE)
             ORDER BY FECHA_CORTE ASC`;
 
-        // Inyección 
-        const [rows] = await conn.query(sql, [userIdentifier]);
+        // 📌 CAMBIO 2: Usamos conn.all() y removemos los corchetes destructuradores [rows]
+        const rows = await conn.all(sql, [userIdentifier]);
         
-        return rows;
+        return rows; // Retorna el array de objetos [{ mes_anio: '2026-06', promedio: 85.5 }, ...]
     } catch (error) {
-        console.error("Error en la consulta SQL:", error);
+        console.error("Error en la consulta SQL de SQLite:", error);
         return [];
     } finally {
-        if (conn) {
-           
-            if (conn.release) conn.release(); 
-        }
+        // Bloque libre de conn.release()
     }
 }
+
 // Handler 
 ipcMain.handle('obtenerTodosLosSeguimientos', async (event, busqueda) => {
     const resultados = await consultarSeguimiento(busqueda);
@@ -690,39 +682,36 @@ async function obtenerEstadisticasHitos(userIdentifier) {
     try {
         conn = await getConnection();
         
+        // 📌 CAMBIO 1: Reemplazamos las funciones de MySQL por strftime de SQLite
         const sql = `SELECT 
-        PROYECTO_ACTUAL, 
-        DATE_FORMAT(FECHA_CORTE, '%Y-%m') as mes_anio, 
-        AVG(HITO_1) as h1,
-        AVG(HITO_2) as h2,
-        AVG(HITO_3) as h3,
-        AVG(HITO_4) as h4,
-        AVG(HITO_5) as h5,
-        AVG(HITO_6) as h6,
-        AVG(HITO_7) as h7,
-        AVG(HITO_8) as h8,
-        AVG(HITO_9) as h9,
-        AVG(HITO_10) as h10
-    FROM seguimiento_micro
-    WHERE USER_ID = ? 
-    GROUP BY YEAR(FECHA_CORTE), MONTH(FECHA_CORTE), PROYECTO_ACTUAL
-    ORDER BY FECHA_CORTE ASC;`;
+            PROYECTO_ACTUAL, 
+            strftime('%Y-%m', FECHA_CORTE) as mes_anio, 
+            AVG(HITO_1) as h1,
+            AVG(HITO_2) as h2,
+            AVG(HITO_3) as h3,
+            AVG(HITO_4) as h4,
+            AVG(HITO_5) as h5,
+            AVG(HITO_6) as h6,
+            AVG(HITO_7) as h7,
+            AVG(HITO_8) as h8,
+            AVG(HITO_9) as h9,
+            AVG(HITO_10) as h10
+        FROM seguimiento_micro
+        WHERE USER_ID = ? 
+        GROUP BY strftime('%Y-%m', FECHA_CORTE), PROYECTO_ACTUAL
+        ORDER BY FECHA_CORTE ASC;`;
 
-        const [rows] = await conn.query(sql, [userIdentifier]);
-        return rows;
+        // 📌 CAMBIO 2: Usamos conn.all() y removemos la destructuración [rows]
+        const rows = await conn.all(sql, [userIdentifier]);
+        
+        return rows; // Retorna la lista de promedios por hito mensual
     } catch (error) {
-        console.error("Error en la consulta SQL:", error);
+        console.error("Error en la consulta SQL de SQLite:", error);
         return [];
     } finally {
-        if (conn) {
-            // Si usas Pool: release(), si usas Connection: end()
-            if (conn.release) conn.release();
-            else if (conn.end) await conn.end();
-        }
+        // Bloque libre de conn.release() o conn.end()
     }
 }
-
-
 // Handler 
 
 ipcMain.handle('obtenerEstadisticasHitos', async (event, busqueda) => {
@@ -750,31 +739,31 @@ async function consultarSeguimientoMacro(userIdentifier) {
     try {
         conn = await getConnection();
         
-        
-        //  Filtro
+        // 📌 CAMBIO 1: Reemplazamos las funciones de MySQL por strftime() de SQLite
         const sql = `
             SELECT 
-                DATE_FORMAT(fecha_seguimiento, '%Y-%m') as mes_anio, 
+                strftime('%Y-%m', fecha_Seguimiento) as mes_anio, 
                 AVG(porcentaje) as promedio 
             FROM seguimiento_macro
             WHERE USER_ID = ? 
-            GROUP BY YEAR(fecha_seguimiento), MONTH(fecha_seguimiento)
-            ORDER BY fecha_seguimiento ASC`;
+            GROUP BY strftime('%Y-%m', fecha_Seguimiento)
+            ORDER BY fecha_Seguimiento ASC`;
 
-        // Inyección 
-        const [rows] = await conn.query(sql, [userIdentifier]);
+        // 📌 CAMBIO 2: Usamos conn.all() para obtener el arreglo directo y limpio de SQLite
+        const rows = await conn.all(sql, [userIdentifier]);
         
-        return rows;
+        return rows; // Retorna la lista mensualizada de promedios macro
     } catch (error) {
-        console.error("Error en la consulta SQL:", error);
+        console.error("Error en la consulta SQL de SQLite:", error);
         return [];
     } finally {
-        if (conn) {
-           
-            if (conn.release) conn.release(); 
-        }
+        // Bloque libre de conn.release()
     }
 }
+
+
+
+
 // Handler 
 ipcMain.handle('obtenerTodosLosSeguimientosMacro', async (event, busqueda) => {
     const resultados = await consultarSeguimientoMacro(busqueda);
@@ -783,8 +772,6 @@ ipcMain.handle('obtenerTodosLosSeguimientosMacro', async (event, busqueda) => {
 
 
 //SEGUIMIENTOS MACRO
-
-
 async function obtenerEstadisticasMacro(idUsuario) { 
     let conn;
     try {
@@ -793,21 +780,19 @@ async function obtenerEstadisticasMacro(idUsuario) {
         const sql = `SELECT 
             SALUD_FISICA, SALUD_MENTAL, SEGURIDAD_PROTECCION, VIVIENDA, 
             INGRESOS_MEDIOS_VIDA, EDUCACION_BASICA, REDES_APOYO, AUTONOMIA,
-            DATE_FORMAT(fecha_Seguimiento, '%d/%m/%Y') as fecha_formateada
+            strftime('%d/%m/%Y', fecha_Seguimiento) as fecha_formateada
         FROM seguimiento_macro 
         WHERE USER_ID = ? 
         ORDER BY fecha_Seguimiento ASC;`;
 
-        const [rows] = await conn.query(sql, [idUsuario]);
+        // 📌 CAMBIO 2: Usamos conn.all() y removemos la destructuración [rows]
+        const rows = await conn.all(sql, [idUsuario]);
         return rows;
     } catch (error) {
-        console.error("Error en la consulta SQL:", error);
+        console.error("Error en la consulta SQL de SQLite:", error);
         return [];
     } finally {
-        if (conn) {
-            if (conn.release) conn.release();
-            else if (conn.end) await conn.end();
-        }
+        // Bloque libre de conn.release() o conn.end()
     }
 }
 
@@ -819,33 +804,34 @@ ipcMain.handle('obtenerEstadisticasMacro', async (event, busqueda) => {
    const resultados = await obtenerEstadisticasMacro(idUsuario);
     return resultados;
 });
-
-
 async function ConsultarSeguimientoEspecifico(datos) {
     let conn; 
     try {
         conn = await getConnection();        
- const { userId, inicio, fin } = datos;
+        const { userId, inicio, fin } = datos;
 
+        // 📌 CAMBIO 1: Cambiamos AS CHAR por AS TEXT para la compatibilidad de SQLite
         const sql = `
             SELECT * FROM seguimiento_macro 
-            WHERE CAST(USER_ID AS CHAR) = ? 
-            AND fecha_Seguimiento BETWEEN ? AND ? 
+            WHERE CAST(USER_ID AS TEXT) = ? 
+              AND fecha_Seguimiento BETWEEN ? AND ? 
             ORDER BY fecha_Seguimiento ASC
         `;
 
- 
         const valores = [userId.trim(), inicio, fin];
         
-        const [rows] = await conn.query(sql, valores);
+        // 📌 CAMBIO 2: Usamos conn.all() para listas de registros y removemos los corchetes [rows]
+        const rows = await conn.all(sql, valores);
         return rows; 
     } catch (error) {
-        console.error("Error en SQL:", error);
+        console.error("Error en SQL de SQLite:", error);
         return []; 
     } finally {
-        if (conn) conn.release(); 
+        // Bloque libre de conn.release()
     }
-}// Handler para Consultar seguimiento
+}
+
+// 📌 Handler para Consultar seguimiento (Se mantiene idéntico y funcional)
 ipcMain.handle('ConsultarSeguimientoEspecifico', async (event, datosBusqueda) => {
     try {
         console.log("=== Nueva Búsqueda por Rango Recibida ===");
@@ -856,36 +842,47 @@ ipcMain.handle('ConsultarSeguimientoEspecifico', async (event, datosBusqueda) =>
         console.log(`Resultados encontrados: ${filasEncontradas.length}`); 
         return filasEncontradas; 
     } catch (error) {
-        console.error("Error crítico en el Handler:", error);
+        console.error("Error crítico en el Handler de IPC:", error);
         return []; 
     }
 });
-
 //eliminar function
-
 
 async function EliminarSeguimiento(seguimientoId) {
     let conn;
     try {
         conn = await getConnection(); 
-        await conn.beginTransaction();
-
-        // CORREGIDO: Filtramos estrictamente por la llave primaria del seguimiento, no por el usuario
-        const sql = 'DELETE FROM seguimiento_macro WHERE ID_SEGUIMIENTO_MACRO = ?'; 
- 
-
-        const [result] = await conn.query(sql, [seguimientoId]);
         
-        await conn.commit();
-        return result.affectedRows > 0;
+        // 📌 CAMBIO 1: Las transacciones en SQLite se inician con un comando SQL directo
+        await conn.run('BEGIN TRANSACTION');
+
+        const sql = 'DELETE FROM seguimiento_macro WHERE ID_SEGUIMIENTO_MACRO = ?'; 
+
+        // 📌 CAMBIO 2: Usamos conn.run() y removemos la destructuración de corchetes [result]
+        const result = await conn.run(sql, [seguimientoId]);
+        
+        // 📌 CAMBIO 3: Confirmamos la transacción con COMMIT
+        await conn.run('COMMIT');
+        
+        // 📌 CAMBIO 4: Evaluamos el éxito con .changes
+        return result.changes > 0;
     } catch (error) {
-        if (conn) await conn.rollback();
-        console.error("Error en la base de datos al eliminar por ID de seguimiento:", error);
+        // 📌 CAMBIO 5: Si hay un error, revertimos ejecutando ROLLBACK
+        if (conn) {
+            try {
+                await conn.run('ROLLBACK');
+            } catch (rollbackError) {
+                console.error("Error al hacer rollback en SQLite:", rollbackError);
+            }
+        }
+        console.error("Error en la base de datos al eliminar por ID de seguimiento en SQLite:", error);
         throw error;
     } finally {
-        if (conn) conn.release();
+        // Bloque libre de conn.release()
     }
 }
+
+
 // 2. Interceptor IPC (Llamada directa al modelo)
 ipcMain.handle('EliminarSeguimiento', async (event, seguimientoId) => {
     try {
@@ -901,44 +898,58 @@ ipcMain.handle('EliminarSeguimiento', async (event, seguimientoId) => {
     }
 });
 
-async function funcionCerrarSesion(id) {
+async function funcionCerrarSesion(idUsuario) {
     let conn;
     try {
-        conn = await getConnection();                                   
+        conn = await getConnection(); 
+        
+        // 📌 Ejecutamos un UPDATE para marcar que el usuario ya no está activo
+        const sql = 'UPDATE usuarios SET LOGUEADO = 0 WHERE USER_ID = ?';
+        
+        // 📌 Usamos conn.run() para modificaciones y pasamos el id
+        const result = await conn.run(sql, [idUsuario]);
+        
+        // Evaluamos si el usuario existía y se actualizó correctamente
+        return result.changes > 0;
     } catch (error) {
-        console.error("Error al conectar a la base de datos para eliminar:", error);
+        console.error("Error al cerrar sesión en la base de datos SQLite:", error);
         throw error;
     } finally {
-        if (conn) conn.release();
+        // Bloque libre de conn.release()
     }
-}   
-
+}
+// 📌 El listener de IPC maneja el cierre de sesión lógico de manera perfecta.
+// Ya no necesitas 'funcionCerrarSesion' conectándose a SQLite.
 ipcMain.on('ir-a-cerrarSesion', (event) => {
-
-    try{
-    console.log("Cerrando sesión de usuario...");
-    usuarioActual = null;
-    mainWindow.loadFile('login.html');
-    console.log("Sesión finalizada. Redirigido al Login."); 
-    }catch (error) {
-        console.error("Error al cerrar sesión:", error);
-    }  
-    
+    try {
+        console.log("=== Solicitud de Cierre de Sesión ===");
+        
+        // 1. Limpiamos el usuario de la memoria global de Electron
+        usuarioActual = null;
+        
+        // 2. Redirigimos la ventana principal a la pantalla de Login
+        mainWindow.loadFile('login.html');
+        
+        console.log("Sesión finalizada con éxito. Redirigido a login.html"); 
+    } catch (error) {
+        console.error("Error crítico en el proceso de cerrar sesión:", error);
+    }   
 });
 
 
 async function registrarNuevoUsuario(datos) {
     let conn;
     try {
-        // Si por algún error de comunicación 'datos' llega vacío o nulo
+        // Validación de datos de entrada (Excelente para asegurar la integridad)
         if (!datos.password || !datos.username || !datos.nombreCompleto || !datos.ciudad) {
             throw new Error("Datos de registro incompletos o invalidos");
         }
 
         conn = await getConnection();
         
+        // 📌 CAMBIO 1: Reemplazamos NOW() por el estándar nativo CURRENT_TIMESTAMP
         const sql = `INSERT INTO usuarios (USERNAME, PASSWORD, nombre_completo, ciudad_nacimiento, FECHA_CREACION) 
-                     VALUES (?, ?, ?, ?, NOW())`;
+                     VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)`;
         
         const valores = [
             datos.username.trim(), 
@@ -947,18 +958,30 @@ async function registrarNuevoUsuario(datos) {
             datos.ciudad.trim()
         ];
 
-        await conn.query(sql, valores);
+        // 📌 CAMBIO 2: Usamos conn.run() para operaciones de escritura (INSERT)
+        await conn.run(sql, valores);
+        
         return { success: true };
 
     } catch (error) {
-        console.error("Fallo en registro:", error.message);
+        console.error("Fallo en registro en SQLite:", error.message);
+        
+        // Captura opcional por si intentan registrar un USERNAME que ya existe (campo UNIQUE)
+        if (error.code === 'SQLITE_CONSTRAINT' || (error.message && error.message.includes('UNIQUE'))) {
+            return { success: false, error: "El nombre de usuario ya está registrado en el sistema." };
+        }
+        
         return { success: false, error: error.message };
     } finally {
-        if (conn) conn.release();
+        // 📌 CAMBIO 3: Bloque libre. En SQLite no necesitas liberar ni cerrar conexiones de esta forma.
     }
 }
 
-// Handler para que el frontend pueda llamar a esta función
+// Handler para que el frontend pueda llamar a esta 
+//función
+
+
+
 ipcMain.handle('registrar-usuario', async (event, datos) => {
     return await registrarNuevoUsuario(datos);
 });
@@ -968,39 +991,41 @@ ipcMain.handle('registrar-usuario', async (event, datos) => {
 async function CambioClave(datos) {
     let conn;
     try {
-        if (!datos.password || !datos.username || !datos.nombreCompleto || !datos.ciudad) {
-            throw new Error("Datos de registro incompletos o invalidos");
+        // 📌 CORRECCIÓN: Quitamos la exigencia de 'datos.nombreCompleto' ya que no se usa en esta función
+        if (!datos.password || !datos.username || !datos.ciudad) {
+            throw new Error("Datos de recuperación incompletos o invalidos");
         }
 
         conn = await getConnection();
 
-        const queryCheck = 'SELECT * FROM usuarios WHERE USERNAME = ? and ciudad_nacimiento = ?';
-        const [rows] = await conn.query(queryCheck, [datos.username.trim(), datos.ciudad.trim()]);
+        const queryCheck = 'SELECT * FROM usuarios WHERE USERNAME = ? AND ciudad_nacimiento = ?';
+        
+        // 📌 CAMBIO 1: Usamos conn.get() para verificar si existe el usuario. Quitamos los corchetes.
+        const usuarioValido = await conn.get(queryCheck, [datos.username.trim(), datos.ciudad.trim()]);
 
-        if (rows.length === 0) {
+        // 📌 CAMBIO 2: En SQLite, conn.get() devuelve 'undefined' si no hay coincidencia
+        if (!usuarioValido) {
             return { success: false, error: "No se encontró un usuario con ese nombre de usuario y ciudad de nacimiento." };
         }
         
         const sql = `UPDATE usuarios SET PASSWORD = ? WHERE USERNAME = ?`;
-        
         const valores = [
-               datos.password,
-            datos.username.trim(), 
-         
+            datos.password,
+            datos.username.trim()
         ];
 
-        await conn.query(sql, valores);
+        // 📌 CAMBIO 3: Usamos conn.run() para aplicar la actualización (UPDATE)
+        await conn.run(sql, valores);
+        
         return { success: true };
 
     } catch (error) {
-        console.error("Fallo en registro:", error.message);
+        console.error("Fallo al cambiar clave en SQLite:", error.message);
         return { success: false, error: error.message };
     } finally {
-        if (conn) conn.release();
+        // Bloque libre de conn.release()
     }
 }
-
-
 
 ipcMain.handle('Actualizar-clave', async (event, datos) => {
     return await CambioClave(datos);
