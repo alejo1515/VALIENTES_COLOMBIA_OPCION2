@@ -9,19 +9,17 @@
   "type": "commonjs",
   "main": "main.js",
   "scripts": {
-    "start": "electron .",
+    "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make"
   },
   "dependencies": {
     "cors": "^2.8.6",
-    "electron": "^0.0.1-security",
     "electron-reload": "^2.0.0-alpha.1",
     "electron-squirrel-startup": "^1.0.1",
     "express": "^5.2.1",
-    "mysql2": "^3.17.2",
-    "sqlite3": "^5.1.7",
-    "promise-mysql": "^5.2.0"
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.11.2",

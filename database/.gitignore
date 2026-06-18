@@ -1,0 +1,17 @@
+# 1. Ignorar absolutamente todo por defecto
+*
+
+# 2. Exceptuar las carpetas que Git NO debe ignorar
+!database/
+!/
+
+# 3. Permitir explícitamente solo los archivos que nos importan
+!database/valientes.sqlite
+!iniciar_app.bat
+!.gitignore
+
+# 4. Volver a ignorar todo lo que se compile dentro de out/ o node_modules/ por si acaso
+node_modules/
+out/
+dist/
+*.exe

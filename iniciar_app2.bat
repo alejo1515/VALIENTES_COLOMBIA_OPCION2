@@ -1,39 +1,38 @@
 @echo off
-title Consola de Sincronizacion - Valientes Colombia
+title Consola de Sincronizacion (DESARROLLO) - Valientes Colombia
 chcp 65001 > nul
 cls
 
 echo ======================================================
-echo           VALIENTES COLOMBIA - SISTEMA DE DATOS        
+echo    VALIENTES COLOMBIA - SISTEMA DE DATOS (DESARROLLO)  
 echo ======================================================
 echo.
 echo [1/3] Descargando la base de datos mas reciente de GitHub...
 echo ------------------------------------------------------
-:: Descarga los cambios que hayan subido otras compañeras antes de abrir el programa
+:: Descarga los cambios de tus compañeras antes de iniciar el entorno
 git pull origin main
 echo ------------------------------------------------------
 echo.
 
-echo [2/3] Abriendo la aplicacion de control...
-echo La consola se ocultará en el fondo para proteger tus datos.
+echo [2/3] Abriendo el entorno de desarrollo (Electron)...
+echo La consola ejecutará el proceso en caliente. No la cierres.
 echo.
 
-:: 📌 CAMBIO PARA EMPAQUETADO: Ejecuta el .exe instalado de forma oculta y espera a que se cierre.
-:: Reemplaza "ValientesColombia.exe" por el nombre real de tu ejecutable.
-powershell -windowstyle hidden -command "Start-Process 'valientes colombia.exe' -Wait"
+:: 📌 EJECUCIÓN EN DESARROLLO: Corre la app usando npm start directamente desde tu código fuente
+call npm start
 
 echo ------------------------------------------------------
 echo [3/3] Guardando y subiendo tus nuevos datos a GitHub...
 echo ------------------------------------------------------
 
-:: 📌 ADVERTENCIA DE RUTA: Asegúrate de que la ruta coincida con el lugar donde tu app guarda el .sqlite
+:: 📌 RUTA LOCAL: Agrega la base de datos de tu carpeta de trabajo
 git add database/valientes.sqlite
 
 :: Captura la fecha y hora exacta con PowerShell de manera limpia
 for /f "delims=" %%i in ('powershell -command "Get-Date -Format 'yyyy-MM-dd HH:mm'"') do set datetime=%%i
-git commit -m "Actualizacion de datos automatica - %datetime%"
+git commit -m "Actualizacion de datos automatica (Desarrollo) - %datetime%"
 
-:: Sube los archivos al repositorio en la nube
+:: Sube los archivos al repositorio de pruebas o producción configurado
 git push origin main
 
 echo ------------------------------------------------------
