@@ -1,1 +1,2 @@
 se debe empaquetar, una vez que este la carpeta out, se copia y se pega la carpeta database y el archivo iniciar_app.bait, posteriormente se iniciara la app siempre desde el archivo iniciar_app , antes de empezar a usarse, se debe crear repositorio GitHub CON ACCESO PRIVADO, solamente podrán acceder los usuarios con las credenciales del git hub, se arranca el git en consola para correr el git y dejar el acceso anclado a la carpeta.
+se puede modificar para iniciar el iniciar_app sin empaquetar trabajando con base de datos sin hosting
