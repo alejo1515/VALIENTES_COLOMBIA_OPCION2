@@ -24,7 +24,8 @@ window.addEventListener('DOMContentLoaded', async () => {
                 EPS: document.getElementById("eps").value,
                 TIPO_AFILIACION_EPS: document.getElementById("tipo_afiliacion_eps").value,
                 OCUPACION: document.getElementById("ocupacion").value,
-                NIVEL_EDUCATIVO: document.getElementById("nivel_educativo").value
+                NIVEL_EDUCATIVO: document.getElementById("nivel_educativo").value,
+                VICTIMA_CONFLICTO: document.getElementById("victima_conflicto").value
             };
 
             const respuesta = await window.api.enviarAlMain('registro', newregistro);

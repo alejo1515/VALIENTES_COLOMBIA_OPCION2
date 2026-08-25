@@ -146,7 +146,7 @@ async function registro(registror) {
     let conn;
     try {
         conn = await getConnection(); 
-        const sql = 'INSERT INTO sobrevivientes (NOMBRES, FECHA_NACIMIENTO, CIUDAD, LUGAR_NACIMIENTO, EPS, TIPO_AFILIACION_EPS, OCUPACION, NIVEL_EDUCATIVO) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+        const sql = 'INSERT INTO sobrevivientes (NOMBRES, FECHA_NACIMIENTO, CIUDAD, LUGAR_NACIMIENTO, EPS, TIPO_AFILIACION_EPS, OCUPACION, NIVEL_EDUCATIVO, VICTIMA_CONFLICTO) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
         
         const valores = [
             registror.NOMBRES,
@@ -156,7 +156,8 @@ async function registro(registror) {
             registror.EPS,
             registror.TIPO_AFILIACION_EPS,
             registror.OCUPACION,
-            registror.NIVEL_EDUCATIVO
+            registror.NIVEL_EDUCATIVO,
+            registror.VICTIMA_CONFLICTO
         ];
         
         const result = await conn.run(sql, valores);
@@ -330,7 +331,7 @@ async function registrarCaso(registroC) {
             };
         }
 
-        // 📌 CAMBIO 2: Cambiamos NOW() al final por CURRENT_TIMESTAMP (Estándar de SQLite)
+        
         const sql = `INSERT INTO caso (
             NOMBRE_CASO, USER_ID, ESTADO_CASO, 
             REPATRIACION_AVION_SOLIDARIO, TIPO_ATENCION, TIPIFICACION, 
@@ -398,12 +399,11 @@ ipcMain.handle('registrarCaso', async (event, datos) => {
 async function ConsultarCaso(textoBusqueda) {
     let conn; 
     try {
-        // 📌 CORRECCIÓN: Quitamos el 'const' duplicado para usar la variable 'let' declarada arriba
+        
         conn = await getConnection(); 
         const busquedaLimpia = textoBusqueda.trim();
         
-        // 📌 CAMBIO 1: Cambiamos AS CHAR por AS TEXT para que SQLite procese la conversión correctamente
-        const sql = `SELECT * FROM caso
+                const sql = `SELECT * FROM caso
                      WHERE CAST(USER_ID AS TEXT) = ? 
                         OR CAST(CASO_ID AS TEXT) LIKE ? 
                         OR NOMBRE_CASO LIKE ? 
@@ -411,17 +411,17 @@ async function ConsultarCaso(textoBusqueda) {
 
         const valores = [busquedaLimpia, `%${busquedaLimpia}%`, `%${busquedaLimpia}%`];
         
-        // 📌 CAMBIO 2: Usamos conn.all() y removemos la destructuración [rows] de MySQL
+        
         const rows = await conn.all(sql, valores);
         
-        return rows; // Retorna un array con el caso encontrado o un array vacío [] si no hay resultados
-    } catch (error) {
+        return rows;
+        } catch (error) {
         console.error("Error en SQL de SQLite:", error);
         return []; 
     } finally {
-        // Bloque libre: SQLite no requiere conn.release()
+    
     }
-}// Handler para Consultar caso
+}
 ipcMain.handle('ConsultarCaso', async (event, busqueda) => {
     try {
         console.log("=== Nueva Búsqueda Recibida ===");
@@ -436,7 +436,7 @@ ipcMain.handle('ConsultarCaso', async (event, busqueda) => {
     }
 });
 
-//eliminar function
+
 
 
 async function EliminarCaso(casoId) {
@@ -460,7 +460,7 @@ async function EliminarCaso(casoId) {
     }
 }
 
-// Handler para Eliminarcaso
+
 ipcMain.handle('EliminarCaso', async (event, id) => {
     try {
         await funcionQueBorraEnMySQL(id);
@@ -469,53 +469,51 @@ ipcMain.handle('EliminarCaso', async (event, id) => {
         return { success: false, error: err.message };
     }
 });
-//funcion registrar seguimiento
+
 async function registrarSeguimiento(registroS) {
     let conn;
     try {
         conn = await getConnection(); 
         
-        // 📌 CAMBIO 1: Reemplazamos NOW() por CURRENT_TIMESTAMP al final del INSERT
-        const sql = `INSERT INTO seguimiento_micro (
-            USER_ID, PROYECTO_ACTUAL, MOTIVACION_EXPECTATIVAS, 
-            HITO_1, HITO_2, HITO_3, HITO_4, HITO_5, HITO_6, HITO_7, HITO_8, HITO_9, HITO_10, 
-            FECHA_CORTE
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP);`;
+        const sql = `
+            INSERT INTO seguimiento_micro (
+                USER_ID, PROYECTO_ACTUAL, MOTIVACION_EXPECTATIVAS, 
+                HITO_1, HITO_2, HITO_3, HITO_4, HITO_5, HITO_6, HITO_7, HITO_8, HITO_9, HITO_10, 
+                FECHA_CORTE, REGISTRADO_POR) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?);
+        `;
         
         const valores = [
-            registroS.USER_ID,
-            registroS.PROYECTO_ACTUAL,
-            registroS.MOTIVACION_EXPECTATIVAS,
-            registroS.HITO_1,
-            registroS.HITO_2,
-            registroS.HITO_3,
-            registroS.HITO_4,
-            registroS.HITO_5,
-            registroS.HITO_6,
-            registroS.HITO_7,
-            registroS.HITO_8,
-            registroS.HITO_9,
-            registroS.HITO_10
+            registroS.USER_ID ?? null,
+            registroS.PROYECTO_ACTUAL ?? null,
+            registroS.MOTIVACION_EXPECTATIVAS ?? null,
+            registroS.HITO_1 ?? 1,
+            registroS.HITO_2 ?? 1,
+            registroS.HITO_3 ?? 1,
+            registroS.HITO_4 ?? 1,
+            registroS.HITO_5 ?? 1,
+            registroS.HITO_6 ?? 1,
+            registroS.HITO_7 ?? 1,
+            registroS.HITO_8 ?? 1,
+            registroS.HITO_9 ?? 1,
+            registroS.HITO_10 ?? 1,
+            registroS.REGISTRADO_POR ?? null
         ];
-        
-        // 📌 CAMBIO 2: Usamos conn.run() en lugar de conn.query() y removemos los corchetes destructuradores
+
         const result = await conn.run(sql, valores);
 
-        // 📌 CAMBIO 3: Evaluamos con .changes y retornamos el ID generado con .lastID
         if (result.changes > 0) {
             console.log("Registro de seguimiento micro exitoso.");
             return { success: true, id: result.lastID };
         } else {
-            return { success: false, message: "No se pudo registrar." };
+            return { success: false, message: "No se pudo registrar la información." };
         }
 
     } catch (error) {
         console.error("Error en la consulta SQL de SQLite:", error);
         return { success: false, error: error.message };
-    } finally {
-        // 📌 CAMBIO 4: Bloque libre, SQLite gestiona y cierra la conexión compartida por sí solo
     }
-}    // handler registrar seguimiento
+}
+
 
 ipcMain.handle('registrarSeguimiento', async (event, datos) => {
     try {
@@ -561,10 +559,12 @@ async function registrarSeguimientoMacro(registroS) {
             // Quitamos 'registroS.fecha_Seguimiento' porque CURRENT_TIMESTAMP se encarga de la fecha automáticamente
         ];
         
-        // 📌 CAMBIO 3: Usamos conn.run() y removemos los corchetes [result]
+        
+
         const result = await conn.run(sql, valores);
 
-        // 📌 CAMBIO 4: Evaluamos con .changes y capturamos el ID generado con .lastID
+        
+        
         if (result.changes > 0) {
             console.log("Registro de seguimiento macro exitoso.");
             return { success: true, id: result.lastID };
@@ -576,9 +576,11 @@ async function registrarSeguimientoMacro(registroS) {
         console.error("Error en la consulta SQL de SQLite:", error);
         return { success: false, error: error.message };
     } finally {
-        // Bloque libre de conn.release()
+     
+        
+
     }
-}    // handler registrar seguimiento macro
+}    
 
 ipcMain.handle('registrarSeguimientoMacro', async (event, datos) => {
     try {
@@ -597,19 +599,11 @@ ipcMain.handle('registrarSeguimientoMacro', async (event, datos) => {
 
 
 
-
-
-
-// Handler para el grafico
 ipcMain.handle('get-stats', async (event, userId) => {
     return await obtenerEstadisticasProgreso(userId);
 });
 
 
-
-
-
-//objetos de registros micro
 
 const textosHitos = {
 

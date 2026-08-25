@@ -36,7 +36,8 @@ btnBuscar.addEventListener('click', async () => {
         } else {
             const opciones = {};
             res.resultados.forEach(u => {
-                // Mostramos ID y Nombre para diferenciar
+
+                
                 opciones[u.USER_ID] = `${u.NOMBRES} (ID: ${u.USER_ID})`;
             });
 

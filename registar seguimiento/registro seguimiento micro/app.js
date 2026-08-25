@@ -25,7 +25,8 @@ btnBuscar.addEventListener('click', async () => {
     
     if (res.success && res.resultados.length > 0) {
         if (res.resultados.length === 1) {
-            // Un solo resultado: Vinculación directa
+
+            
             inputID.value = res.resultados[0].USER_ID;
             inputBusqueda.value = res.resultados[0].NOMBRES;
             Swal.fire('Vinculado', `Se vinculó a: ${res.resultados[0].NOMBRES}`, 'success');
@@ -167,9 +168,9 @@ const formSeguimiento = document.getElementById("formSeguimiento")
 const formUSER_ID = document.getElementById("user_identifier");
 const formPROYECTO_ACTUAL = document.getElementById("selectorProyecto");
 const formMOTIVACION_EXPECTATIVAS = document.getElementById("motivacionFija");
+const formREGISTRADO_POR = document.getElementById("registrado_por");
 
 
-// boton guardar
 // Listener del formulario
 formSeguimiento.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -213,9 +214,10 @@ formSeguimiento.addEventListener('submit', async (e) => {
         HITO_6: h6,
         HITO_7: h7,
         HITO_8: h8,
-        HITO_9: h9,
+        HITO_9: h9, 
         HITO_10: h10,
-        PORCENTAJE_EXITO: porcentaje
+        PORCENTAJE_EXITO: porcentaje,
+        REGISTRADO_POR: formREGISTRADO_POR.value
     };
 
     console.log("Datos a enviar:", newregistroC);
