@@ -1,11 +1,11 @@
 {
   "name": "valientes-colombia",
   "version": "1.0.0",
-  "description": "",
+  "description": "Valientes Colombia",
   "productName": "valientes colombia",
   "keywords": [],
   "license": "ISC",
-  "author": "",
+  "author": "valientes colombia",
   "type": "commonjs",
   "main": "main.js",
   "scripts": {

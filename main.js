@@ -971,8 +971,6 @@ async function registrarNuevoUsuario(datos) {
     }
 }
 
-// Handler para que el frontend pueda llamar a esta 
-//función
 
 
 
@@ -985,7 +983,8 @@ ipcMain.handle('registrar-usuario', async (event, datos) => {
 async function CambioClave(datos) {
     let conn;
     try {
-        // 📌 CORRECCIÓN: Quitamos la exigencia de 'datos.nombreCompleto' ya que no se usa en esta función
+
+        
         if (!datos.password || !datos.username || !datos.ciudad) {
             throw new Error("Datos de recuperación incompletos o invalidos");
         }
@@ -994,10 +993,11 @@ async function CambioClave(datos) {
 
         const queryCheck = 'SELECT * FROM usuarios WHERE USERNAME = ? AND ciudad_nacimiento = ?';
         
-        // 📌 CAMBIO 1: Usamos conn.get() para verificar si existe el usuario. Quitamos los corchetes.
+        
+        
         const usuarioValido = await conn.get(queryCheck, [datos.username.trim(), datos.ciudad.trim()]);
 
-        // 📌 CAMBIO 2: En SQLite, conn.get() devuelve 'undefined' si no hay coincidencia
+        
         if (!usuarioValido) {
             return { success: false, error: "No se encontró un usuario con ese nombre de usuario y ciudad de nacimiento." };
         }
@@ -1008,7 +1008,8 @@ async function CambioClave(datos) {
             datos.username.trim()
         ];
 
-        // 📌 CAMBIO 3: Usamos conn.run() para aplicar la actualización (UPDATE)
+        
+        
         await conn.run(sql, valores);
         
         return { success: true };
@@ -1017,7 +1018,9 @@ async function CambioClave(datos) {
         console.error("Fallo al cambiar clave en SQLite:", error.message);
         return { success: false, error: error.message };
     } finally {
-        // Bloque libre de conn.release()
+        
+        
+        
     }
 }
 
@@ -1037,13 +1040,15 @@ function createWindow(){
     window = new BrowserWindow({
         width: 1100,
         height: 900,
+        show: false,
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
                preload: path.join(__dirname, 'preload.js'),
         }
     });
- 
+   window.maximize(); 
+    window.show(); 
     window.loadFile('loginhtml.html');
 }
 
